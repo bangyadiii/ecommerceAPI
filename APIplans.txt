@@ -1,0 +1,131 @@
+Standar API
+
+{API.host/root}/api/{grouping}/{endpoint}
+
+
+example:
+    localhost:3000/api/auth/sign-up
+
+
+Standar Status response
+
+    200 - OK -> Call API success
+    201 - CREATED -> Post Successfully
+    400 - BAD REQUEST -> Error on client Side (salah format input dll)
+    401 - UNAUTHORIZED -> User not authorized to the request 
+    403 - FORBIDDEN -> User not allowed to access
+    404 - NOT FOUND -> Request endpoint not FOUND
+    500 - INTERNAL SERVER ERROR -> Error server Side
+    502 - BAD GATEWAY -> Invalid Response From Another Request
+
+
+[ GROUPING ]
+[1] - Authentication
+
+    1. Sign In
+
+    req : 
+    {
+        "email" : "triad@gmail.com",
+        "password" : triadi123
+
+    }
+
+
+    response : 
+    {
+        message : "Login success"
+
+    }
+
+    2. Register
+    req : 
+    {
+        id: 1,
+        nama: "triadi",
+        alamat: "Ngelak, RT 02 RW 11",
+        email: "triadilaksamana@gmail.com",
+        password : "triadi123",
+        passwordConfirmation: "triadi123"
+        avatar: triadi.foto123.jpg
+
+    }
+
+    response: 
+    {
+        message : "Sign Up success"
+        data: {
+            id: 1,
+            nama: "triadi",
+            alamat: "Ngelak, RT 02 RW 11",
+            email: "triadilaksamana@gmail.com",
+            password : "hSamcomer23mCLskLmncnla@cajwmlWdmLwinCSNLAcaasld" -> password has been encrypted
+            avatar: triadi.foto123.jpg
+
+        }
+    }
+
+
+
+[2] - Product
+    
+    [1] Create -> POST
+
+    req : 
+    {
+        "nama_product": "Smart Band Huawei",
+        "harga" : 560000,
+        "stok" : 12,
+        "image" : "smartband.jpg",
+        "deskripsi singkat" : "tanya stok sebelum membeli",
+        "deskripsi lengkap" : "Smart band ini memiliki chipset 10 core yang cepat dan efisien, daya baterai hingga 10 hari"
+
+
+    }
+
+    res : 
+    {
+        message : "Produk berhasil ditambahkan.",
+        data: 
+        {
+            product_id:1
+            "nama_product": "Smart Band Huawei",
+            "harga" : 560000,
+            "stok" : 12,
+            "image" : "smartband.jpg",
+            "deskripsi singkat" : "tanya stok sebelum membeli",
+            "deskripsi lengkap" : "Smart band ini memiliki chipset 10 core yang cepat dan efisien, daya baterai hingga 10 hari"
+        }
+    }
+
+    [2] index -> Get All product data -> GET
+    req : 
+
+    res : 
+    {
+        message : "Data semua produk limit 100"
+        data: [
+            {
+                id: 1,
+                nama_produk: "Jam tangan Mahal",
+                deskripsi_singkat : "barang ini mahal tapi kualitasnya bagus",
+                deskripsi_lengkap : "Barang ini memiliki batteri 10mWh dengan ketahanan 5 hari,
+                                    Spesifikasi : Lorem, ipsum dolor sit amet consectetur adipisicing elit. 
+                                                Expedita illum consequatur deserunt iusto repudiandae inventore 
+                stok : 2,
+                image : "localhost:4000/img/product_120_judul.jpg"                              possimus ut, quos consequuntur neque.",
+                harga : 540000,
+
+
+
+            }
+
+        ]
+
+
+    }
+
+    [3] Delete -> Delete A Product
+    [4] Edit -> Edit Product
+
+[3]
