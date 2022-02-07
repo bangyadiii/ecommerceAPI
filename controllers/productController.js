@@ -1,18 +1,8 @@
-const { validationResult } = require("express-validator");
 const { Product } = require("../models");
 
 //create product
 
 exports.create = async (req, res, next) => {
-    const error = validationResult(req);
-    if (!error.isEmpty()) {
-        const err = new Error();
-        err.message = "Invalid input tidak sesuai.";
-        err.status = 400;
-        err.data = error.array();
-        throw err;
-    }
-
     try {
         const data = req.body;
         data.image = req.file.filename;
@@ -40,7 +30,9 @@ exports.create = async (req, res, next) => {
 
 exports.getAll = async (req, res, next) => {
     try {
-        const product = await Product.findAll({});
+        const product = await Product.findAll({
+            limit: 1,
+        });
         res.status(200).json({
             message: "Data semua product ditemukan.",
             data: product,
@@ -49,3 +41,5 @@ exports.getAll = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.validate = (kategori) => {};

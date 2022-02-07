@@ -7,7 +7,7 @@ const app = express();
 const productRoutes = require("./routes/product");
 const authRoutes = require("./routes/auth");
 const morgan = require("morgan");
-const upload = require("./config/storageConfiguration");
+const upload = require("./helper/fileUpload");
 
 //setup
 app.use(cors());
