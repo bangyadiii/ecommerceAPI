@@ -1,6 +1,6 @@
-const { User } = require("../models");
+const models = require("../models");
 const bcrypt = require("bcryptjs");
-const { body, validationResult } = require("express-validator/check");
+const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -12,9 +12,9 @@ exports.signUp = async (req, res, next) => {
         res.status(422).json({ errors: errors.array() });
         return;
     }
-    console.log(error);
+    console.log(errors);
     try {
-        const newUser = new User({
+        const newUser = new models.User({
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
@@ -40,7 +40,7 @@ exports.signIn = async (req, res, next) => {
     const { email, password } = req.body;
 
     try {
-        await User.findOne({
+        await models.User.findOne({
             where: { email: email },
         }).then((user) => {
             if (!user) {
@@ -72,7 +72,7 @@ exports.getUserById = async (req, res, next) => {
     try {
         const username = req.query.username;
         console.log("ini adalah ID.. ", username);
-        const data = await User.findAll({
+        const data = await models.User.findAll({
             where: { username: username },
         });
         console.log(data);

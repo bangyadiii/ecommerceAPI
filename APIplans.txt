@@ -11,6 +11,7 @@ Standar Status response
 
     200 - OK -> Call API success
     201 - CREATED -> Post Successfully
+    202 - Accepted -> Update was accepted
     400 - BAD REQUEST -> Error on client Side (salah format input dll)
     401 - UNAUTHORIZED -> User not authorized to the request 
     403 - FORBIDDEN -> User not allowed to access
