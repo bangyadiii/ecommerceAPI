@@ -9,6 +9,6 @@ router.post(
     authController.signUp
 );
 router.post("/signin", authController.signIn);
-router.get("/", authController.getUserById);
+router.get("/", authController.getUserByUsername);
 
 module.exports = router;

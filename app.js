@@ -8,6 +8,7 @@ const productRoutes = require("./routes/product");
 const authRoutes = require("./routes/auth");
 const morgan = require("morgan");
 const upload = require("./helper/fileUpload");
+const cookieParser = require("cookie-parser");
 
 //setup
 app.use(cors());
@@ -23,12 +24,15 @@ app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
 
 //error handling
+
+//default error / endpoint error
 app.use((req, res, next) => {
     const err = new Error("Not Found!");
     err.status = 404;
     next(err);
 });
-
+app.use(cookieParser());
+//send error
 app.use((error, req, res, next) => {
     const message = error.message;
     const status = error.status || 500;

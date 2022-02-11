@@ -1,21 +1,21 @@
 {
     "development": {
         "username": "root",
-        "password": "toor",
+        "password": "",
         "database": "s4l",
         "host": "localhost",
         "dialect": "mysql"
     },
     "test": {
         "username": "root",
-        "password": "toor",
+        "password": "",
         "database": "s4l",
         "host": "localhost",
         "dialect": "mysql"
     },
     "production": {
         "username": "root",
-        "password": "toor",
+        "password": "",
         "database": "s4l",
         "host": "localhost",
         "dialect": "mysql"

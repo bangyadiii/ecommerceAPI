@@ -9,10 +9,8 @@ dotenv.config();
 exports.signUp = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        res.status(422).json({ errors: errors.array() });
-        return;
+        return res.status(422).json({ errors: errors.array() });
     }
-    console.log(errors);
     try {
         const newUser = new models.User({
             username: req.body.username,
@@ -21,74 +19,73 @@ exports.signUp = async (req, res, next) => {
             alamat: req.body.alamat,
             noHP: req.body.noHP,
         });
-        await newUser.save();
-
+        const apa = await newUser.save();
+        console.log(apa);
         res.status(201).json({
             message: "Account has been created successfully",
             data: newUser.dataValues,
         });
     } catch (error) {
-        res.status(400).json({
-            message: error.message,
-        });
+        next(error);
     }
 };
 
 //sign in
 exports.signIn = async (req, res, next) => {
     //mendapatkan nim dari request query
-    const { email, password } = req.body;
 
     try {
-        await models.User.findOne({
-            where: { email: email },
-        }).then((user) => {
+        const user = await models.User.findOne({
+            where: { email: req.body.email },
+        }).then(async (user) => {
             if (!user) {
-                res.status(400).json({
-                    message: "User tidak terdaftar.",
-                });
-            } else if (!bcrypt.compareSync(password, user.password)) {
-                res.status(400).json({
-                    message: "Password salah",
-                });
-            } else {
-                const token = jwt.sign(
-                    { _username: user.username },
-                    process.env.SECRET_TOKEN
-                );
-
-                res.header("auth-token", token).json({
-                    message: "Berhasil login",
-                    data: user,
-                });
+                const error = new Error("Email tidak terdaftar.");
+                error.status = 400;
+                throw error;
             }
+            return user;
         });
+
+        const match = user.validPassword(req.body.password);
+        if (match === false) {
+            const error = new Error("Password salah");
+            error.status = 400;
+            throw error;
+        }
+        const token = jwt.sign(
+            { id: user.id, _email: user.email },
+            process.env.ACCESS_SECRET_TOKEN,
+            {
+                expiresIn: "1d",
+            }
+        );
+
+        res.header("Authorization", token).json({ token });
     } catch (error) {
-        throw error;
+        next(error);
     }
 };
 
-exports.getUserById = async (req, res, next) => {
+exports.logout = () => {};
+
+exports.getUserByUsername = async (req, res, next) => {
     try {
         const username = req.query.username;
-        console.log("ini adalah ID.. ", username);
         const data = await models.User.findAll({
             where: { username: username },
+            attributes: ["username", "alamat", "noHP"],
         });
-        console.log(data);
         if (data.length > 0) {
             res.status(200).json({
                 message: `Data ditemukan`,
                 data,
             });
         } else {
-            res.status(404).json({
-                message: `Data tidak ditemukan`,
-                data: data || null,
-            });
+            const error = new Error("Data tidak ditemukan.");
+            error.status = 400;
+            throw error;
         }
     } catch (err) {
-        err.status = 400;
         next(err);
     }
 };

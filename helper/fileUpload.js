@@ -1,4 +1,5 @@
 const multer = require("multer");
+const { format } = require("path/posix");
 
 const storage = multer.diskStorage({
     destination: function (err, file, cb) {
@@ -6,7 +7,8 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         const uniqueSuffix = Date.now();
-        cb(null, uniqueSuffix + "_" + file.originalname);
+        let format = file.originalname.split(".");
+        cb(null, "S4L_IMG_" + uniqueSuffix + "." + format[format.length - 1]);
         console.log(uniqueSuffix);
     },
 });
