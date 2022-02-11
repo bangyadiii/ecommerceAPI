@@ -9,15 +9,17 @@ const authRoutes = require("./routes/auth");
 const morgan = require("morgan");
 const upload = require("./helper/fileUpload");
 const cookieParser = require("cookie-parser");
-
+const dotenv = require("dotenv");
+dotenv.config();
 //setup
-app.use(cors());
+app.use(cors({ credentials: true }));
 
 app.use(upload);
 
 app.use(bodyParser.json());
 
 app.use(morgan("dev"));
+app.use(cookieParser());
 
 app.use("/assets", express.static("public/assets/images"));
 app.use("/api/auth", authRoutes);
@@ -31,7 +33,6 @@ app.use((req, res, next) => {
     err.status = 404;
     next(err);
 });
-app.use(cookieParser());
 //send error
 app.use((error, req, res, next) => {
     const message = error.message;

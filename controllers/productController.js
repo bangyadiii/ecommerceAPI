@@ -57,15 +57,18 @@ exports.create = async (req, res, next) => {
 //update
 exports.update = async (req, res, next) => {
     const data = req.body;
+    const id = req.params.id;
 
     try {
-        const updated = await models.Product.update(data, {
-            where: { id: data.id },
+        await models.Product.update(data, {
+            where: { id: id },
         });
-        console.log(updated);
+        const updatedData = await models.Product.findOne({
+            where: { id: id },
+        });
         res.status(202).json({
             message: "Update was accepted",
-            data: updated,
+            data: updatedData,
         });
     } catch (error) {
         next(error);
@@ -77,7 +80,7 @@ exports.destroy = async (req, res, next) => {
     const id = req.params.id;
 
     try {
-        const result = await models.Product.destroy({
+        await models.Product.destroy({
             where: {
                 id: id,
             },
@@ -85,7 +88,7 @@ exports.destroy = async (req, res, next) => {
             if (deletedRecord) {
                 res.status(200).json({ message: "Deleted successfully" });
             } else {
-                res.status(404).json({ message: "record not found" });
+                res.status(400).json({ message: "record not found" });
             }
         });
     } catch (error) {

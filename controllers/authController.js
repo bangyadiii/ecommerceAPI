@@ -1,9 +1,6 @@
 const models = require("../models");
-const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const dotenv = require("dotenv");
-dotenv.config();
 
 //sign up
 exports.signUp = async (req, res, next) => {
@@ -53,12 +50,29 @@ exports.signIn = async (req, res, next) => {
             throw error;
         }
         const token = jwt.sign(
-            { id: user.id, _email: user.email },
+            { _id: user.id, _email: user.email },
             process.env.ACCESS_SECRET_TOKEN,
+            {
+                expiresIn: "30s",
+            }
+        );
+
+        const refreshToken = jwt.sign(
+            {
+                _id: user.id,
+                _email: user.email,
+            },
+            process.env.REFRESH_ACCESS_TOKEN,
             {
                 expiresIn: "1d",
             }
         );
+
+        await user.update({ refresh_token: refreshToken });
+        res.cookie("refresh_token", refreshToken, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+        });
 
         res.header("Authorization", token).json({ token });
     } catch (error) {

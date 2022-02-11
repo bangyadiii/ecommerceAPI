@@ -11,8 +11,8 @@ router.get("/:id", productController.getOne);
 router.post("/", verifyToken, productController.create);
 
 //update
-router.put("/", productController.update);
+router.put("/:id", verifyToken, productController.update);
 
-router.delete("/:id", productController.destroy);
+router.delete("/:id", verifyToken, productController.destroy);
 
 module.exports = router;

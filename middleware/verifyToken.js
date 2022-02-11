@@ -4,11 +4,13 @@ dotenv.config();
 
 exports.verifyToken = (req, res, next) => {
     const token = req.header("Authorization");
-    if (!token) return res.status(401).json({ messge: "Access Denied" });
+    if (!token) return res.status(401).json({ message: "Access Denied" });
 
     try {
-        const verified = jwt.verify(token, process.env.ACCESS_SECRET_TOKEN);
-        req.user = verified;
+        jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, decoded) => {
+            if (err) return res.sendStatus(403);
+            req.email = decoded.email;
+        });
 
         next();
     } catch (error) {
