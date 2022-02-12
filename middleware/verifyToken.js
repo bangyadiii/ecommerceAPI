@@ -9,7 +9,8 @@ exports.verifyToken = (req, res, next) => {
     try {
         jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, decoded) => {
             if (err) return res.sendStatus(403);
-            req.email = decoded.email;
+            req.email = decoded._email;
+            req.id = decoded._id;
         });
 
         next();

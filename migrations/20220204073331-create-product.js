@@ -1,42 +1,43 @@
-'use strict';
+"use strict";
 module.exports = {
-  async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Products', {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
-        type: Sequelize.INTEGER
-      },
-      nama_produk: {
-        type: Sequelize.STRING
-      },
-      deskripsi_singkat: {
-        type: Sequelize.STRING
-      },
-      deskripsi_lengkap: {
-        type: Sequelize.STRING
-      },
-      stok: {
-        type: Sequelize.INTEGER
-      },
-      image: {
-        type: Sequelize.STRING
-      },
-      harga: {
-        type: Sequelize.INTEGER
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      }
-    });
-  },
-  async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Products');
-  }
+    async up(queryInterface, DataTypes) {
+        await queryInterface.createTable("Products", {
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: DataTypes.INTEGER,
+            },
+            nama_produk: {
+                type: DataTypes.STRING,
+            },
+            deskripsi_singkat: {
+                type: DataTypes.STRING,
+            },
+            deskripsi_lengkap: {
+                type: DataTypes.STRING,
+            },
+            stok: {
+                type: DataTypes.INTEGER,
+            },
+            image: {
+                type: DataTypes.STRING,
+            },
+            harga: {
+                type: DataTypes.INTEGER,
+            },
+
+            createdAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+            },
+            updatedAt: {
+                allowNull: false,
+                type: DataTypes.DATE,
+            },
+        });
+    },
+    async down(queryInterface, DataTypes) {
+        await queryInterface.dropTable("Products");
+    },
 };

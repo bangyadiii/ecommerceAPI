@@ -2,15 +2,18 @@
 const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require("cors");
-const port = 4000;
 const app = express();
 const productRoutes = require("./routes/product");
 const authRoutes = require("./routes/auth");
+const categoryRoutes = require("./routes/category");
 const morgan = require("morgan");
 const upload = require("./helper/fileUpload");
 const cookieParser = require("cookie-parser");
-const dotenv = require("dotenv");
-dotenv.config();
+const transactionRoutes = require("./routes/transaction");
+require("dotenv").config();
+
+const PORT = process.env.PORT || 8000;
+
 //setup
 app.use(cors({ credentials: true }));
 
@@ -21,9 +24,11 @@ app.use(bodyParser.json());
 app.use(morgan("dev"));
 app.use(cookieParser());
 
-app.use("/assets", express.static("public/assets/images"));
 app.use("/api/auth", authRoutes);
 app.use("/api/product", productRoutes);
+app.use("/api/transaction", transactionRoutes);
+app.use("/api/category", categoryRoutes);
+app.use("/assets", express.static("public/assets/images"));
 
 //error handling
 
@@ -45,6 +50,6 @@ app.use((error, req, res, next) => {
     });
 });
 // db.authenticate().then(() => console.log("connected to database"));
-app.listen(port, () =>
-    console.log(`server has been started on http://localhost:${port}  ...`)
+app.listen(PORT, () =>
+    console.log(`server has been started on http://localhost:${PORT}  ...`)
 );

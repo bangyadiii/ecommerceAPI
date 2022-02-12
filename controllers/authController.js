@@ -12,12 +12,12 @@ exports.signUp = async (req, res, next) => {
         const newUser = new models.User({
             username: req.body.username,
             email: req.body.email,
+            nama: req.body.nama,
             password: req.body.password,
             alamat: req.body.alamat,
             noHP: req.body.noHP,
         });
-        const apa = await newUser.save();
-        console.log(apa);
+        await newUser.save();
         res.status(201).json({
             message: "Account has been created successfully",
             data: newUser.dataValues,
@@ -40,15 +40,16 @@ exports.signIn = async (req, res, next) => {
                 error.status = 400;
                 throw error;
             }
+
             return user;
         });
 
         const match = user.validPassword(req.body.password);
-        if (match === false) {
-            const error = new Error("Password salah");
-            error.status = 400;
-            throw error;
-        }
+        if (!match)
+            return res.status(400).json({
+                message: "password salah",
+            });
+        // token = "";
         const token = jwt.sign(
             { _id: user.id, _email: user.email },
             process.env.ACCESS_SECRET_TOKEN,
@@ -67,7 +68,6 @@ exports.signIn = async (req, res, next) => {
                 expiresIn: "1d",
             }
         );
-
         await user.update({ refresh_token: refreshToken });
         res.cookie("refresh_token", refreshToken, {
             httpOnly: true,
@@ -80,7 +80,30 @@ exports.signIn = async (req, res, next) => {
     }
 };
 
-exports.logout = () => {};
+exports.logout = async (req, res, next) => {
+    const refresh_token = req.cookies.refresh_token;
+
+    if (!refresh_token)
+        return res.status(204).json({ message: "No token found" });
+
+    try {
+        const user = await models.User.findOne({
+            where: {
+                refresh_token,
+            },
+        });
+        if (!user) return res.send(204).json({ message: "No token found" });
+
+        await user.update({ refresh_token: null }, { where: { id: user.id } });
+
+        res.clearCookie("refresh_token");
+        res.status(200).json({
+            message: "logout succcessful",
+        });
+    } catch (error) {
+        next(error);
+    }
+};
 
 exports.getUserByUsername = async (req, res, next) => {
     try {
@@ -104,14 +127,22 @@ exports.getUserByUsername = async (req, res, next) => {
     }
 };
 
-exports.validate = (kategori) => {
-    switch (kategori) {
-        case "signup":
-            return [
-                body("username", "username harus dimasukkan.").exists(),
-                body("email", "email tidak valid").exists().isEmail(),
-                body("noHP", "Nomor hp tidak valid").optional().isNumeric(),
-                body("alamat").optional().isString(),
-            ];
+exports.getTransactions = async (req, res, next) => {
+    try {
+        const data = await models.User.findOne({
+            where: {
+                id: req.id,
+            },
+            attributes: ["nama", "email", "username", "alamat"],
+            include: "Transaction",
+        });
+        if (!data) throw new Error("Data tidak ada");
+
+        res.status(200).json({
+            message: "Data Transaksi berhasil didapatkan.",
+            data: data,
+        });
+    } catch (error) {
+        next(error);
     }
 };
