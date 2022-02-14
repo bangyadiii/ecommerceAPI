@@ -10,6 +10,7 @@ router.post("/signin", authController.signIn);
 router.get("/token", refreshToken);
 router.get("/", authController.getUserByUsername);
 router.get("/transaksi", verifyToken, authController.getTransactions);
+router.post("/keranjang", verifyToken, authController.addCart);
 router.delete("/logout", authController.logout);
 
 module.exports = router;

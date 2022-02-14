@@ -2,14 +2,14 @@ const models = require("../models/");
 
 exports.create = async (req, res, next) => {
     try {
-        const { product_id, product_qty } = req.body;
+        const { productId, product_qty } = req.body;
         const user = await models.User.findOne({
             where: { id: req.id },
         });
         if (!user) return res.status(403).json({ message: "Forbidden" });
 
-        await models.Transaction.create({
-            product_id,
+        const data = await models.Transaction.create({
+            productId,
             product_qty,
             userId: user.id,
         });

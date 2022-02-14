@@ -1,4 +1,5 @@
 const models = require("../models");
+const { Transaction } = require("../models");
 const { body, validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
 
@@ -134,13 +135,48 @@ exports.getTransactions = async (req, res, next) => {
                 id: req.id,
             },
             attributes: ["nama", "email", "username", "alamat"],
-            include: "Transaction",
+            include: [
+                {
+                    association: "Transaction",
+                    attributes: ["id", "productId", "product_qty"],
+                    include: "Product",
+                },
+            ],
         });
         if (!data) throw new Error("Data tidak ada");
 
         res.status(200).json({
             message: "Data Transaksi berhasil didapatkan.",
             data: data,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+exports.addCart = async (req, res, next) => {
+    try {
+        const user = await models.User.findOne({
+            where: {
+                id: req.id,
+            },
+        });
+        if (!user) return res.sendStatus(403);
+        const newCart = await models.Product.create(
+            {
+                id: req.body.productId,
+                User: user,
+            },
+            {
+                include: models.User,
+            }
+        );
+
+        if (!newCart) throw new Error("Data tidak ada");
+
+        res.status(200).json({
+            message: "Product berhasil ditambahkan dikeranjang",
+            data: newCart,
         });
     } catch (error) {
         next(error);
